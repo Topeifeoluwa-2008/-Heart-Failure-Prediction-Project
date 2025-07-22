@@ -1,39 +1,43 @@
 # -Heart-Failure-Prediction-Project
 
 ## Project Overview
-This project implements a machine learning model to predict heart failure risk using clinical parameters. The model achieves over 80% accuracy and includes a user-friendly Flask web application for real-time predictions.
+This project is a Machine Learning-based web application that predicts the likelihood of heart failure based on clinical records. The app is built with **Flask** and trained using a classification model to assist medical professionals and patients in identifying risks early.
+The model also achieves over 80% accuracy and includes a user-friendly Flask web application for real-time predictions.
 
-## Project Structure
-heart_failure_project/
-│
-├── heart_failure_model.ipynb     # Jupyter notebook with model training
-├── app.py                        # Flask web application
-├── heart_failure_model.pkl       # Trained model (generated after training)
-├── feature_names.pkl            # Feature names (generated after training)
-├── scaler.pkl                   # Data scaler (if needed, generated after training)
-├── templates/
-│   └── index.html               # Web interface with custom CSS
-├── heart_failure_clinical_records_dataset (1).csv  # Dataset
-└── README.md                    # This file
+## Objective
 
-Step 1: Prepare the Dataset
+- Train a machine learning model to predict heart failure.
+- Achieve at least **80% accuracy**.
+- Deploy the model using Flask.
+- Create a responsive web interface for user input.
 
-Download the heart failure dataset
-Place it in your project directory as heart_failure_clinical_records_dataset (1).csv
 
-Step 2: Train the Model
+Step 1:Dataset
+The dataset used is the **Heart Failure Clinical Records Dataset**, which contains 13 clinical features such as age, ejection fraction, serum creatinine, and more.
+
+--- [Source of Dataset](https://www.kaggle.com/datasets/andrewmvd/heart-failure-clinical-data)
+
+---
+
+## 🛠️ Technologies Used
+
+- Python
+- Scikit-learn
+- Pandas, NumPy
+- Flask
+- HTML/CSS (Custom styling)
+- Jupyter Notebook
+
+## Train the Model
 
 Run the Jupyter notebook heart_failure_model.ipynb
 This will generate:
 
-heart_failure_model.pkl
-feature_names.pkl
-scaler.pkl
+- heart_failure_model.pkl
+- feature_names.pkl
+- scaler.pkl
 
-Step 3: Run the Flask App
-bashpython app.py
-The application will be available at http://localhost:5000
-📊 Model Performance
+## Model Performance
 
 Primary Model: Random Forest Classifier (with hyperparameter tuning)
 Accuracy: 80%+ (varies based on data split)
@@ -56,6 +60,7 @@ smoking - If patient smokes
 time - Follow-up period
 
 ## Web Application Feature
+
 Responsive Design: Works on desktop and mobile
 Real-time Predictions: Instant results with confidence scores
 Interactive UI: Modern design with animations and tooltips
@@ -63,7 +68,7 @@ Input Validation: Ensures all required fields are completed
 Risk Visualization: Progress bars showing confidence levels
 Error Handling: Graceful error messages and loading states
 
-Using the Web App
+## Using the Web App
 
 Fill in all 12 clinical parameters
 Click "Predict Heart Failure Risk"
@@ -81,17 +86,7 @@ Tooltip information for medical parameters
 Loading animations
 Risk-based color coding (red for high risk, blue for low risk)
 
-API Endpoints
-
-GET / - Main web interface
-POST /predict - Make prediction (returns JSON)
-GET /api/features - Get feature names
-GET /health - Health check endpoint
-
-Example API Usage
-pythonimport requests
-
-# Prediction request
+## Prediction request
 data = {
     'age': 75,
     'anaemia': 0,
@@ -110,6 +105,7 @@ data = {
 response = requests.post('http://localhost:5000/predict', data=data)
 result = response.json()
 print(result)
+
 ## Model Training Process
 
 Data Exploration: Comprehensive EDA with visualizations
@@ -124,3 +120,9 @@ Feature Importance: Analysis of most predictive features
 Most Important Features: Ejection fraction, serum creatinine, and age are typically the most predictive
 Model Robustness: Cross-validation ensures stable performance
 Real-world Application: Web interface makes the model accessible for practical use
+
+## Acknowledgements
+- Dev Town Bootcamp
+- Dataset by Andras MVD on Kaggle
+
+
