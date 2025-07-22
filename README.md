@@ -12,8 +12,9 @@ The model also achieves over 80% accuracy and includes a user-friendly Flask web
 - Create a responsive web interface for user input.
 
 
-Step 1:Dataset
-The dataset used is the **Heart Failure Clinical Records Dataset**, which contains 13 clinical features such as age, ejection fraction, serum creatinine, and more.
+Dataset
+
+The dataset used is the Heart Failure Clinical Records Dataset, which contains 13 clinical features such as age, ejection fraction, serum creatinine, and more.
 
 --- [Source of Dataset](https://www.kaggle.com/datasets/andrewmvd/heart-failure-clinical-data)
 
@@ -86,25 +87,91 @@ Tooltip information for medical parameters
 Loading animations
 Risk-based color coding (red for high risk, blue for low risk)
 
-## Prediction request
-data = {
-    'age': 75,
-    'anaemia': 0,
-    'creatinine_phosphokinase': 582,
-    'diabetes': 0,
-    'ejection_fraction': 20,
-    'high_blood_pressure': 1,
-    'platelets': 265000,
-    'serum_creatinine': 1.9,
-    'serum_sodium': 130,
-    'sex': 1,
-    'smoking': 0,
-    'time': 4
+## Prepare features and target
+X = df.drop('DEATH_EVENT', axis=1)
+y = df['DEATH_EVENT']
+
+print("\nFeature columns:")
+print(X.columns.tolist())
+
+# Train-test split
+```
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+print(f"\nTraining set size: {X_train.shape}")
+print(f"Test set size: {X_test.shape}")
+
+# Train and evaluate models
+results = {}
+best_model = None
+best_accuracy = 0
+best_model_name = None
+best_scaler = None
+
+print("\nModel Performance Comparison:")
+print("="*60)
+ Scale the features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Initialize models
+models = {
+    'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
+    'Gradient Boosting': GradientBoostingClassifier(n_estimators=100, random_state=42),
+    'Logistic Regression': LogisticRegression(random_state=42, max_iter=1000),
+    'SVM': SVC(random_state=42, probability=True)
 }
 
-response = requests.post('http://localhost:5000/predict', data=data)
-result = response.json()
-print(result)
+for name, model in models.items():
+    # Use scaled data for SVM and Logistic Regression
+    if name in ['SVM', 'Logistic Regression']:
+        X_train_use = X_train_scaled
+        X_test_use = X_test_scaled
+        current_scaler = scaler
+    else:
+        X_train_use = X_train
+        X_test_use = X_test
+        current_scaler = None
+
+    # Train the model
+    model.fit(X_train_use, y_train)
+
+    # Make predictions
+    y_pred = model.predict(X_test_use)
+    y_pred_proba = model.predict_proba(X_test_use)[:, 1]
+
+    # Calculate metrics
+    accuracy = accuracy_score(y_test, y_pred)
+    auc_score = roc_auc_score(y_test, y_pred_proba)
+
+    # Cross-validation score
+    cv_scores = cross_val_score(model, X_train_use, y_train, cv=5, scoring='accuracy')
+
+    results[name] = {
+        'accuracy': accuracy,
+        'auc': auc_score,
+        'cv_mean': cv_scores.mean(),
+        'cv_std': cv_scores.std()
+    }
+
+    print(f"{name}:")
+    print(f"  Accuracy: {accuracy:.4f}")
+    print(f"  AUC Score: {auc_score:.4f}")
+    print(f"  CV Score: {cv_scores.mean():.4f} (+/- {cv_scores.std()*2:.4f})")
+    print(f"  Classification Report:")
+    print(classification_report(y_test, y_pred))
+    print("-"*60)
+
+    # Track best model
+    if accuracy > best_accuracy:
+        best_accuracy = accuracy
+        best_model = model
+        best_model_name = name
+        best_scaler = current_scaler
+
+print(f"\nBest Model: {best_model_name} with accuracy: {best_accuracy:.4f}")
+```
 
 ## Model Training Process
 
