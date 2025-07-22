@@ -88,6 +88,8 @@ Loading animations
 Risk-based color coding (red for high risk, blue for low risk)
 
 ## Prepare features and target
+df = pd.read_csv('/content/heart_failure_clinical_records_dataset (1).csv')
+
 X = df.drop('DEATH_EVENT', axis=1)
 y = df['DEATH_EVENT']
 
